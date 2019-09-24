@@ -1,0 +1,26 @@
+/* 内部静态变量的懒汉模式单例实现 */
+class Singleton
+{
+private:
+	/* 构造函数和析构函数设为私有,禁止外部构造和析构 */
+	Singleton();
+	~Singleton();
+
+	/* 拷贝构造函数和赋值构造函数也设为私有,禁止外部拷贝和赋值 */
+	Singleton(const Singleton &singleton);
+	const Singleton &operator = (const Singleton &singleton);
+
+public:
+	//获取单实例对象
+	static Singleton * GetInstance();
+
+	//打印实例地址
+	void Print();
+};
+
+Singleton* Singleton::GetInstance()
+{
+	/* 局部静态特性的方式实现单实例 */
+	static Singleton singleton;
+	return &singleton;
+}

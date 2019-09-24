@@ -1,0 +1,32 @@
+//n个整数的无序数组，找到每个元素后面比它大的第一个数，要求时间复杂度为O(N)
+vector<int> findMax(vector<int> num)
+{
+	int len = num.size();
+
+	/* 空数组,返回空 */
+	if (len == 0) return {};
+
+	/* 返回结果:初始化-1, 表示未找到 */
+	vector<int> res(len, -1);
+	int i = 0;
+
+	/* 栈: num中还未找到符合条件的元素索引 */
+	stack<int> s;
+
+	while (i < len)
+	{
+		/* 如果栈空或者当前num元素不大于栈顶,将当前元素压栈,索引后移 */
+		if (s.empty() || num[s.top()] >= num[i])
+		{
+			s.push(i++);
+		}
+		/* 有待处理元素,且num当前元素大于栈顶索引元素，符合条件，更新结果数组中该索引的值，栈顶出栈。*/
+		else
+		{
+			res[s.top()] = num[i];
+			s.pop();
+		}
+	}
+
+	return res;
+}

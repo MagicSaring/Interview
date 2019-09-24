@@ -1,0 +1,29 @@
+/* 饿汉模式单例(本身就线程安全) */
+class Singleton
+{
+private:
+	/* 构造函数和析构函数设为私有,禁止外部构造和析构 */
+	Singleton();
+	~Singleton();
+
+	/* 拷贝构造函数和赋值构造函数也设为私有,禁止外部拷贝和赋值 */
+	Singleton(const Singleton &singleton);
+	const Singleton &operator = (const Singleton &singleton);
+
+public:
+	//获取单实例
+	static Singleton* GetInstance();
+
+	//释放单实例
+	static void DeleteInstance();
+
+	//打印实例地址
+	void Print();
+
+private:
+	//唯一单实例对象指针
+	static Singleton *g_pSingleton;
+};
+
+//代码一运行就初始化并创建实例,本身线程安全
+Singleton *Singleton::g_pSingleton = new (std::nothrow) Singleton;
