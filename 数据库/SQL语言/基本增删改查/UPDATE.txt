@@ -1,0 +1,16 @@
+SQL UPDATE 语句
+UPDATE 语句用于更新表中已存在的记录。
+
+SQL UPDATE 语法
+UPDATE table_name
+SET column1=value1,column2=value2,...
+WHERE some_column=some_value;
+
+Update 警告！
+在更新记录时要格外小心！在上面的实例中，如果我们省略了 WHERE 子句，如下所示：
+
+UPDATE Websites
+SET alexa='5000', country='USA'
+执行以上代码会将 Websites 表中所有数据的 alexa 改为 5000，country 改为 USA。
+
+执行没有 WHERE 子句的 UPDATE 要慎重，再慎重。

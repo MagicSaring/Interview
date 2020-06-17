@@ -1,0 +1,47 @@
+SQL 视图（Views）
+视图是可视化的表。
+
+SQL CREATE VIEW 语句
+在 SQL 中，视图是基于 SQL 语句的结果集的可视化的表。
+
+视图包含行和列，就像一个真实的表。视图中的字段就是来自一个或多个数据库中的真实的表中的字段。
+
+您可以向视图添加 SQL 函数、WHERE 以及 JOIN 语句，也可以呈现数据，就像这些数据来自于某个单一的表一样。
+
+SQL CREATE VIEW 语法
+CREATE VIEW view_name AS
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+注释：视图总是显示最新的数据！每当用户查询视图时，数据库引擎通过使用视图的 SQL 语句重建数据。
+
+SQL 更新视图
+您可以使用下面的语法来更新视图：
+
+SQL CREATE OR REPLACE VIEW 语法
+CREATE OR REPLACE VIEW view_name AS
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+
+SQL Server
+ALTER VIEW [ schema_name . ] view_name [ ( column [ ,...n ] ) ] 
+[ WITH <view_attribute> [ ,...n ] ] 
+AS select_statement 
+[ WITH CHECK OPTION ] [ ; ]
+
+<view_attribute> ::= 
+{ 
+    [ ENCRYPTION ]
+    [ SCHEMABINDING ]
+    [ VIEW_METADATA ]     
+} 
+schema_name: 视图所属架构的名称。
+view_name: 要更改的视图。
+column: 将成为指定视图的一部分的一个或多个列的名称（以逗号分隔）。
+
+SQL 撤销视图
+您可以通过 DROP VIEW 命令来删除视图。
+
+SQL DROP VIEW 语法
+DROP VIEW view_name
