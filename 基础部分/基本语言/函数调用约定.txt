@@ -1,0 +1,96 @@
+在DLL的调用中，要特别注意调用约定的不同，在windows中，有__cdecl,__stdcall,__fastcall等几种调用约定。
+
+1:__cdecl
+__cdecl调用约定是C/C++的默认调用约定，因为是由调用者清理堆栈，所以可以实现变长参数。并且因为要求每个函数
+调用都包含清理堆栈的代码，所以其生成的可执行文件要比用__stdcall生成的尺寸大，下面是这种调用约定的特征。
+
+(1)：参数传递由右向左。
+(2)：呼叫者清理堆栈。
+(3)：C编译时函数符号解析是在函数名前加一个_。
+(4):/Gd选项强迫整个文件按照该调用约定进行编译。
+
+下面是windows下的反汇编代码：
+
+;在主函数中将参数3，2入栈，然后调用被解析后的函数名称_fun，
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ push 1
+ push 3
+ push 2
+ call _fun
+;将esp加12，进行堆栈清理
+ add esp, 12
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ push ebp
+ mov ebp, esp
+ mov eax, DWORD PTR _a$[ebp]
+ add eax, DWORD PTR _b$[ebp]
+ pop ebp
+ ret 0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+2:__stdcall:
+__stdcall是用来呼叫Win32 API函数的一种调用约定，由被调用者清理堆栈，所以不能将拥有变长参数的函数声明为此种
+调用约定。
+
+(1)：参数传递由右向左
+(2)：被调用函数清理堆栈
+(3)：C编译时函数符号解析是在函数名前加_，函数名称后面加@，其后加十进制表示的参数所占的字节，例如有：
+     int func(int a,int b,int c),解析后为: _func@12
+(4): /Gz选项强迫整个文件按照该调用约定进行编译。
+(5): 函数指针声明方式：typedef BOOL (__stdcall *funcname_ptr)(int a,int b);
+
+下面是windows下的反汇编代码：
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ push 1
+ push 3
+ push 2
+ call _fun@12
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ push ebp
+ mov ebp, esp
+ mov eax, DWORD PTR _a$[ebp]
+ add eax, DWORD PTR _b$[ebp]
+ add eax, DWORD PTR _c$[ebp]
+ pop ebp
+ ret 12
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+3:__fastdcall
+
+  __fastcall指定函数参数通过寄存器来传递（只是约定，并不是一种保证）
+
+(1)：前两个DWORD或者字节数小于DWORD的参数通过ECX和EDX寄存器传递，其余参数从右向左进行传递
+(2)：被调用者清理堆栈。
+(3)：C编译时函数符号解析是在函数名前后都加@，在末尾加十进制表示的参数所占的字节，例如：
+     int func(int a,int b,int c),解析后为: _@func@12
+(4): /Gr选项强迫整个文件按照该调用约定进行编译(main函数除外)。
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+push 1
+ mov edx, 3
+ mov ecx, 2
+ call @fun@12
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ push ebp
+ mov ebp, esp
+ sub esp, 8
+ mov DWORD PTR _b$[ebp], edx
+ mov DWORD PTR _a$[ebp], ecx
+ mov eax, DWORD PTR _a$[ebp]
+ add eax, DWORD PTR _b$[ebp]
+ add eax, DWORD PTR _c$[ebp]
+ mov esp, ebp
+ pop ebp
+ ret 4
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+4:thiscall:
+  thiscall是调用C++类成员函数的默认调用约定
+(1):this指针被放置在ECX中
+(2):被呼叫者清理函数堆栈
+(3):因为thiscall不是关键字，所以不能被显示应用于代码中
+
+5:naked
+   这种调用约定仅仅被用在VxD驱动程序中。
+(1):参数传递方式为从右向左
+(2):呼叫者清理被调用函数堆栈

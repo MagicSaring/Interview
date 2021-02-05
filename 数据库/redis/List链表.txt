@@ -1,0 +1,24 @@
+List 
+说白了就是链表（redis 使用双端链表实现的 List），是有序的，value可以重复，可以通过下标取出对应的value值，左右两边都能进行插入和删除数据。
+
+使用列表的技巧
+
+lpush+lpop=Stack(栈)
+lpush+rpop=Queue（队列）
+lpush+ltrim=Capped Collection（有限集合）
+lpush+brpop=Message Queue（消息队列）
+
+
+127.0.0.1:6379> lpush mylist 1 2 ll ls mem
+(integer) 5
+127.0.0.1:6379> lrange mylist 0 -1
+1) "mem"
+2) "ls"
+3) "ll"
+4) "2"
+5) "1"
+
+实战场景：
+
+1.timeline：例如微博的时间轴，有人发布微博，用lpush加入时间轴，展示新的列表信息。
+

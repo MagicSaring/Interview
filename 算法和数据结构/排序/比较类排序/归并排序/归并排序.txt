@@ -1,0 +1,66 @@
+归并排序（Merge Sort）
+归并排序是建立在归并操作上的一种有效的排序算法。
+该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。
+将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。
+若将两个有序表合并成一个有序表，称为2-路归并。 
+
+算法描述：
+1）把长度为n的输入序列分成两个长度为n/2的子序列；
+2）对这两个子序列分别采用归并排序；
+3）将两个排序好的子序列合并成一个最终的排序序列。
+
+代码实现：
+//归并排序
+template<typename T>
+void merge(T arr[], int start, int mid, int end)
+{
+    T* temp = new T[end - start + 1];       //第一步，申请空间，大小为两个排序序列之和
+    int firstSectionIndex = start;          	//第二步，设定两个待排序列的起始位置的索引
+    int secondSectionIndex = mid + 1;
+    int tempIndex = 0;                          	//所申请空间的索引
+
+    while (firstSectionIndex <= mid && secondSectionIndex <= end)           //直到两个序列中有一个到达终止位置
+    {
+	temp[tempIndex++] = arr[firstSectionIndex] <= arr[secondSectionIndex] ?
+	arr[firstSectionIndex++] : arr[secondSectionIndex++];
+    }
+
+    while (firstSectionIndex <= mid)
+    {
+        temp[tempIndex++] = arr[firstSectionIndex++];
+    }
+
+    while (secondSectionIndex <= end)
+    {
+        temp[tempIndex++] = arr[secondSectionIndex++];
+    } 
+
+    //将合并且排序好的元素，复制到原来的数组中，释放临时数组空间
+    for (int i = 0; i < tempIndex; ++i)
+    {
+        arr[start + i] = temp[i];
+    }
+    
+    delete[] temp;
+}
+
+template<typename T>
+void mergeSort(T arr[], int start, int end)
+{
+    if (arr == NULL || start >= end)
+    {
+        return;
+    }
+
+    int mid = (start + end) / 2;
+
+    mergeSort(arr, start, mid);
+    mergeSort(arr, mid + 1, end);
+    merge(arr, start, mid, end);
+}
+
+
+算法分析
+归并排序是一种稳定的排序方法。
+和选择排序一样，归并排序的性能不受输入数据的影响，但表现比选择排序好的多，因为始终都是O(nlogn）的时间复杂度。
+代价是需要额外的内存空间。
